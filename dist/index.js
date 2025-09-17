@@ -1,12 +1,15 @@
-import express from "express";
-import dotenv from "dotenv";
-dotenv.config({ path: "./.env" });
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const dbConnection_1 = require('./db/dbConnection');
+dotenv.config({ path: './.env' });
 const app = express();
-app.get("/", (req, res) => {
-    console.log("db= ", process.env.DB);
-    return res.send("Hello Shivam!");
+app.get('/', (req, res) => {
+  return res.status(200).json({
+    success: true,
+    message: 'Server is 100% healthy.',
+  });
 });
 app.listen(process.env.PORT, () => {
-    console.log(`server is running at ${process.env.PORT}`);
+  (0, dbConnection_1.dbConnect)();
+  console.log(`server is running at ${process.env.PORT}`);
 });
-//# sourceMappingURL=index.js.map
