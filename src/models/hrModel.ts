@@ -1,4 +1,6 @@
+import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
+import jwt, { type Secret } from 'jsonwebtoken';
 
 interface Ihr {
   name: string;
@@ -16,6 +18,7 @@ interface Ihr {
   profilePhotoUrl?: string;
   accessToken?: string;
   refreshToken?: string;
+  isPasswordCorrect?: (password: string) => Promise<boolean>;
 }
 
 const HrSchema = new mongoose.Schema<Ihr>(
@@ -71,4 +74,36 @@ const HrSchema = new mongoose.Schema<Ihr>(
   { timestamps: true },
 );
 
-export const Hr = mongoose.model<Ihr>('Hr', HrSchema);
+// save password in encrypted hash
+HrSchema.pre('save', async function (next) {
+  if (!this.isModified('pawssword')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  return next();
+});
+
+// short lived token
+HrSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      name: this.name,
+    },
+    process.env.ACCESS_TOKEN_SECRET as Secret,
+    { expiresIn: '2d' },
+  );
+};
+
+// long lived token
+HrSchema.methods.genrateRefreshToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+    },
+    process.env.REFRESH_TOKEN_SECRET as Secret,
+    { expiresIn: '7d' },
+  );
+};
+
+const Hr = mongoose.model<Ihr>('Hr', HrSchema);
+export default Hr;

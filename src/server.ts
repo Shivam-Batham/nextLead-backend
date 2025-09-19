@@ -1,8 +1,30 @@
 import express, { type Request, type Response } from 'express';
+import userRouter from './routes/userRouter.ts';
+import domainRouter from './routes/domainRouter.ts';
+import hrRouter from './routes/hrRouter.ts';
+import driveAttendiesRouter from './routes/driveAttendiesRouter.ts';
+import interveiwPostRouter from './routes/interveiwPostRouter.ts';
 
 const app = express();
 app.use(express.json({ limit: '100kb' }));
 
+/* routes declaration */
+//  User routes
+app.use('/api/user', userRouter);
+
+// domain routes
+app.use('/api/domain', domainRouter);
+
+// hr routes
+app.use('/api/hr', hrRouter);
+
+// drive routes
+app.use('/api/drive', driveAttendiesRouter);
+
+// interviewPost routes
+app.use('/api/posts', interveiwPostRouter);
+
+// serverHealth
 app.get('/', (req: Request, res: Response) => {
   return res.status(200).json({
     success: true,
