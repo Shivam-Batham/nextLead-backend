@@ -1,27 +1,34 @@
 import bcrypt from 'bcryptjs';
-import mongoose from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import jwt, { type Secret } from 'jsonwebtoken';
 
-interface Ihr {
+export interface Ihr {
   name: string;
   password: string;
   email: string;
-  contact: string;
-  location: string;
-  previousHiredNumber: number;
-  jobPostCount: number;
-  totalHiringDriveCount: number;
-  company: string;
-  city: string;
-  state: string;
-  country: string;
+  contact?: string;
+  location?: string;
+  previousHiredNumber?: number;
+  jobPostCount?: number;
+  totalHiringDriveCount?: number;
+  company?: string;
+  city?: string;
+  state?: string;
+  country?: string;
   profilePhotoUrl?: string;
   accessToken?: string;
   refreshToken?: string;
-  isPasswordCorrect?: (password: string) => Promise<boolean>;
 }
 
-const HrSchema = new mongoose.Schema<Ihr>(
+export interface IHrMethods {
+  isPasswordCorrect: (password: string) => Promise<boolean>;
+  generateAccessToken: () => string;
+  generateRefreshToken: () => string;
+}
+
+export type HrModel = Model<Ihr, {}, IHrMethods>;
+
+const HrSchema = new mongoose.Schema<Ihr, HrModel, IHrMethods>(
   {
     name: {
       type: String,
@@ -32,6 +39,11 @@ const HrSchema = new mongoose.Schema<Ihr>(
       type: String,
       required: true,
       unique: true,
+      minLength: [1, 'Email is required.'],
+    },
+    password: {
+      type: String,
+      required: true,
       minLength: [1, 'Email is required.'],
     },
     contact: {
@@ -105,5 +117,5 @@ HrSchema.methods.genrateRefreshToken = function () {
   );
 };
 
-const Hr = mongoose.model<Ihr>('Hr', HrSchema);
+const Hr = mongoose.model<Ihr, HrModel>('Hr', HrSchema);
 export default Hr;

@@ -1,30 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import User from '../models/userModal.ts';
-import type { Types } from 'mongoose';
-
-type tokens = {
-  accessToken: string | null;
-  refreshToken: string | null;
-};
-export async function generateTokens(id: Types.ObjectId, next: NextFunction): Promise<tokens> {
-  try {
-    const user = await User.findById({ _id: id });
-    if (!user) {
-      return { accessToken: null, refreshToken: null };
-    }
-    const accessToken: string = user.generateAccessToken();
-    const refreshToken: string = user.generateRefreshToken();
-
-    user.accessToken = accessToken;
-    user.refreshToken = refreshToken;
-
-    await user.save({ validateBeforeSave: false });
-    return { accessToken, refreshToken };
-  } catch (error) {
-    next(error);
-    return { accessToken: null, refreshToken: null };
-  }
-}
+import { generateTokens } from '../utils/generateTokens.ts';
+import Hr from '../models/hrModel.ts';
 
 export async function login(req: Request, res: Response, next: NextFunction) {
   try {
@@ -35,15 +12,22 @@ export async function login(req: Request, res: Response, next: NextFunction) {
         message: 'All field are required.',
       });
     }
-    const user = await User.findOne({ email: email });
-    if (!user) {
+
+    // Findout the owner account in User or Hr using email.
+    let account = await User.findOne({ email: email });
+
+    if (!account) {
+      account = await Hr.findOne({ email: email });
+    }
+
+    if (!account) {
       return res.status(404).json({
         success: false,
         message: 'User not found.',
       });
     }
 
-    const isPasswordCorrect = await user?.isPasswordCorrect?.(password);
+    const isPasswordCorrect = await account?.isPasswordCorrect?.(password);
     if (!isPasswordCorrect) {
       return res.status(400).json({
         success: false,
@@ -51,14 +35,14 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       });
     }
 
-    const { accessToken, refreshToken } = await generateTokens(user._id, next);
+    const { accessToken, refreshToken } = await generateTokens(account._id, User, next);
 
     // set in headers
     res.setHeader('Authorization', `Bearer ${accessToken}`);
     res.setHeader('Refresh-Token', `${refreshToken}`);
 
     // find loggedIn User && set cookie
-    const loggedInUser = await User.findById(user._id).select('-password -refreshToken');
+    const loggedInUser = await User.findById(account._id).select('-password -refreshToken');
 
     const options = {
       httpOnly: true,
@@ -79,8 +63,33 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 
 export async function logout(req: Request, res: Response, next: NextFunction) {
   try {
-    const user = await User.findByIdAndUpdate(
-      req?.user?._id,
+    let accountId: any = req?.user?._id;
+
+    if (!accountId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Id is required.',
+      });
+    }
+
+    let Model: any = User;
+
+    accountId = await User.findById(accountId);
+
+    if (!accountId) {
+      accountId = await Hr.findById(accountId);
+      Model = Hr;
+    }
+
+    if (!accountId) {
+      return res.status(404).json({
+        success: false,
+        message: 'Account not found.',
+      });
+    }
+
+    const data = await Model.findByIdAndUpdate(
+      accountId,
       {
         $set: { refreshToken: null, accessToken: null },
       },
@@ -92,17 +101,9 @@ export async function logout(req: Request, res: Response, next: NextFunction) {
       secure: true,
     };
 
-    if (!user) {
-      return res.status(200).clearCookie('accessToken', options).clearCookie('refreshToken', options).json({
-        success: true,
-        data: user,
-        message: 'User logout succesfull.',
-      });
-    }
-
     return res.status(200).clearCookie('accessToken', options).clearCookie('refreshToken', options).json({
       success: true,
-      data: user,
+      data: data,
       message: 'User logout succesfull.',
     });
   } catch (error) {

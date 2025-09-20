@@ -20,7 +20,7 @@ export async function createUser(req: Request, res: Response, next: NextFunction
     }
 
     // create new user
-    let user = new User<Iuser>({ name: name, email: email, password });
+    let user = new User<Iuser>({ name: name, email: email, password: password });
     user = await user.save();
     // remove password from the user
     const { password: _, ...userWithoutPassword } = user.toObject();
