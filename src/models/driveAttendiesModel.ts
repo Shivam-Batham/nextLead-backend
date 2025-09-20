@@ -1,19 +1,20 @@
 import mongoose, { Schema, Types } from 'mongoose';
 
 interface Idrive {
-  user_Id: Types.ObjectId;
-  interveiwPost_Id: Types.ObjectId;
+  _id?: Types.ObjectId;
+  userId: Types.ObjectId;
+  interveiwPostId: Types.ObjectId;
   resume?: string;
 }
 
 const driveAttendiesSchema = new mongoose.Schema<Idrive>(
   {
-    user_Id: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    interveiwPost_Id: {
+    interveiwPostId: {
       type: Schema.Types.ObjectId,
       ref: 'InterveiwPost',
       required: true,

@@ -1,8 +1,9 @@
 import mongoose, { Schema, Types } from 'mongoose';
 
 interface Ipost {
-  hr_Id: Types.ObjectId;
-  domain_Id: Types.ObjectId;
+  _id?: Types.ObjectId;
+  hrId: Types.ObjectId;
+  domainId: Types.ObjectId;
   jobTitle: string;
   description: string;
   qualification: string;
@@ -21,12 +22,12 @@ interface Ipost {
 
 const postSchema = new mongoose.Schema<Ipost>(
   {
-    hr_Id: {
+    hrId: {
       type: Schema.Types.ObjectId,
       ref: 'Hr',
       required: true,
     },
-    domain_Id: {
+    domainId: {
       type: Schema.Types.ObjectId,
       ref: 'Domain',
       required: true,

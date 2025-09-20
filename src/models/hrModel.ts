@@ -1,8 +1,9 @@
 import bcrypt from 'bcryptjs';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import jwt, { type Secret } from 'jsonwebtoken';
 
 export interface Ihr {
+  _id?: Types.ObjectId;
   name: string;
   password: string;
   email: string;
