@@ -1,6 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 interface Idomain {
+  _id: Types.ObjectId;
   domainName: string;
 }
 

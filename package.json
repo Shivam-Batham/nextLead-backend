@@ -2,13 +2,13 @@
   "name": "nextlead-backend",
   "version": "1.0.0",
   "description": "",
-  "homepage": "https://github.com/Shivam-Batham/nextLead-bakcend#readme",
+  "homepage": "https://github.com/Shivam-Batham/nextLead-backend#readme",
   "bugs": {
-    "url": "https://github.com/Shivam-Batham/nextLead-bakcend/issues"
+    "url": "https://github.com/Shivam-Batham/nextLead-backend/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Shivam-Batham/nextLead-bakcend.git"
+    "url": "git+https://github.com/Shivam-Batham/nextLead-backend.git"
   },
   "license": "ISC",
   "type": "module",

@@ -9,7 +9,7 @@ router.route('/login').post(login);
 router.route('/logout').post(logout);
 
 router.route('/createUser').post(createUser);
-router.route('/user/:id').get(authMiddle, getUser);
+router.route('/getUser/:id').get(authMiddle, getUser);
 router.route('/updateUser/:id').put(authMiddle, updateUser);
 router.route('/deleteUser/:id').delete(authMiddle, deleteUser);
 
