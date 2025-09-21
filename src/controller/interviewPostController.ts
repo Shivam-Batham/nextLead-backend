@@ -210,7 +210,7 @@ export async function deletePost(req: Request, res: Response, next: NextFunction
 export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
   try {
     const posts = await InterveiwPost.find();
-
+    
     return res.status(200).json({
       success: true,
       message: 'All post is fectched successfully.',
