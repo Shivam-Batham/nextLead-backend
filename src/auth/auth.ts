@@ -45,7 +45,6 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     res.setHeader('Refresh-Token', `${refreshToken}`);
 
     // find loggedIn User && set cookie
-    console.log(account);
     const loggedInUser = await Model.findById(account._id).select('-password -refreshToken');
     const options = {
       httpOnly: true,
@@ -76,15 +75,14 @@ export async function logout(req: Request, res: Response, next: NextFunction) {
     }
 
     let Model: any = User;
+    let accountDoc = await User.findById(accountId);
 
-    accountId = await User.findById(accountId);
-
-    if (!accountId) {
-      accountId = await Hr.findById(accountId);
+    if (!accountDoc) {
+      accountDoc = await Hr.findById(accountId);
       Model = Hr;
     }
 
-    if (!accountId) {
+    if (!accountDoc) {
       return res.status(404).json({
         success: false,
         message: 'Account not found.',

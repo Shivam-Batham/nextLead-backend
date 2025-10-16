@@ -38,19 +38,20 @@ export async function createHr(req: Request, res: Response, next: NextFunction) 
 
 export async function updateHr(req: Request, res: Response, next: NextFunction) {
   try {
-    const { id, name, location, contact, company, city, state, country } = req.body;
+    const { name, location, contact, company, city, state, country } = req.body;
+    const { id } = req.params;
     if (!id) {
       return res.status(400).json({
         success: false,
         message: 'Id is required.',
       });
     }
-    const existingUser = await Hr.findById({ _id: id });
+    const existingUser = await Hr.findById(id);
 
     if (!existingUser) {
       return res.status(404).json({
         success: false,
-        message: 'User not found',
+        message: 'Hr not found',
       });
     }
     const updatedUser = await Hr.findByIdAndUpdate(
@@ -69,7 +70,7 @@ export async function updateHr(req: Request, res: Response, next: NextFunction) 
 
     return res.status(200).json({
       success: true,
-      message: 'User updated successfully.',
+      message: 'Hr updated successfully.',
       data: updatedUser,
     });
   } catch (error) {
