@@ -3,8 +3,8 @@ import Hr, { type Ihr } from '../models/hrModel.ts';
 
 export async function createHr(req: Request, res: Response, next: NextFunction) {
   try {
-    const { name, email, password } = req.body;
-    if (!(name && email && password)) {
+    const { name, email, password,contact } = req.body;
+    if (!(name && email && password && contact)) {
       return res.status(400).json({
         success: false,
         message: 'All fields are required.',
@@ -20,10 +20,10 @@ export async function createHr(req: Request, res: Response, next: NextFunction) 
     }
 
     // create new user
-    let hr = new Hr<Ihr>({ name: name, email: email, password: password });
+    let hr = new Hr<Ihr>({ name: name, email: email, password: password, contact: contact });
     hr = await hr.save();
     // remove password from the user
-    const { password: _, ...userWithoutPassword } = hr.toObject();
+    const { password: _, ...userWithoutPassword } = hr.toObject();  
 
     return res.status(201).json({
       success: true,
