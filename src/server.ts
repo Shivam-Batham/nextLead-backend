@@ -4,6 +4,7 @@ import domainRouter from './routes/domainRouter.ts';
 import hrRouter from './routes/hrRouter.ts';
 import driveAttendiesRouter from './routes/driveAttendiesRouter.ts';
 import interveiwPostRouter from './routes/interveiwPostRouter.ts';
+import adminRouter from './routes/adminRouter.ts';
 
 const app = express();
 app.use(express.json({ limit: '100kb' }));
@@ -23,6 +24,9 @@ app.use('/api/drive', driveAttendiesRouter);
 
 // interviewPost routes
 app.use('/api/posts', interveiwPostRouter);
+
+// admin routes
+app.use('/api/admin', adminRouter); 
 
 // serverHealth
 app.get('/', (req: Request, res: Response) => {

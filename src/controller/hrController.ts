@@ -137,3 +137,17 @@ export async function deleteHr(req: Request, res: Response, next: NextFunction) 
     next(error);
   }
 }
+
+export async function getAllHr(req: Request, res: Response, next: NextFunction) {
+  try {
+    const hr = await Hr.find();
+    return res.status(200).json({
+      success: true,
+      message: 'Hr found.',
+      data: hr,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}

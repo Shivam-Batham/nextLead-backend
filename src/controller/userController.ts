@@ -135,3 +135,17 @@ export async function deleteUser(req: Request, res: Response, next: NextFunction
     next(error);
   }
 }
+
+export async function getAllUser(req: Request, res: Response, next: NextFunction) {
+  try {
+    const user = await User.find();
+    return res.status(200).json({
+      success: true,
+      message: 'User found.',
+      data: user,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
