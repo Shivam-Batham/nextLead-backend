@@ -27,7 +27,9 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       });
     }
 
-    const isPasswordCorrect = await account?.isPasswordCorrect?.(password);
+    const isPasswordCorrect = await account.isPasswordCorrect?.(password);
+    console.log(isPasswordCorrect,password,account.password);
+
     if (!isPasswordCorrect) {
       return res.status(400).json({
         success: false,

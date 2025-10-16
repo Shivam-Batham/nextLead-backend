@@ -89,10 +89,14 @@ const HrSchema = new mongoose.Schema<Ihr, HrModel, IHrMethods>(
 
 // save password in encrypted hash
 HrSchema.pre('save', async function (next) {
-  if (!this.isModified('pawssword')) return next();
+  if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 10);
   return next();
 });
+
+HrSchema.methods.isPasswordCorrect = async function (password: string) {
+  return await bcrypt.compare(password, this.password);
+};
 
 // short lived token
 HrSchema.methods.generateAccessToken = function () {
@@ -108,7 +112,7 @@ HrSchema.methods.generateAccessToken = function () {
 };
 
 // long lived token
-HrSchema.methods.genrateRefreshToken = function () {
+HrSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
