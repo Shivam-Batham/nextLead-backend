@@ -14,10 +14,12 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     }
 
     // Findout the owner account in User or Hr using email.
+    let Model: any = User;
     let account = await User.findOne({ email: email });
 
     if (!account) {
       account = await Hr.findOne({ email: email });
+      Model = Hr;
     }
 
     if (!account) {
@@ -28,7 +30,6 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     }
 
     const isPasswordCorrect = await account.isPasswordCorrect?.(password);
-    console.log(isPasswordCorrect,password,account.password);
 
     if (!isPasswordCorrect) {
       return res.status(400).json({
@@ -37,15 +38,15 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       });
     }
 
-    const { accessToken, refreshToken } = await generateTokens(account._id, User, next);
+    const { accessToken, refreshToken } = await generateTokens(account._id, Model, next);
 
     // set in headers
     res.setHeader('Authorization', `Bearer ${accessToken}`);
     res.setHeader('Refresh-Token', `${refreshToken}`);
 
     // find loggedIn User && set cookie
-    const loggedInUser = await User.findById(account._id).select('-password -refreshToken');
-
+    console.log(account);
+    const loggedInUser = await Model.findById(account._id).select('-password -refreshToken');
     const options = {
       httpOnly: true,
       secure: true,
