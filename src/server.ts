@@ -5,8 +5,17 @@ import hrRouter from './routes/hrRouter.ts';
 import driveAttendiesRouter from './routes/driveAttendiesRouter.ts';
 import interveiwPostRouter from './routes/interveiwPostRouter.ts';
 import adminRouter from './routes/adminRouter.ts';
+import cors from 'cors';
 
 const app = express();
+
+app.use(
+  cors({
+    origin: '*',
+    credentials: true,
+  })
+);
+
 app.use(express.json({ limit: '100kb' }));
 
 /* routes declaration */
