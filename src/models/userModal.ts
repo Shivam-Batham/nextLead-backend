@@ -6,6 +6,19 @@ export interface Iuser {
   _id?: Types.ObjectId;
   name: string;
   password: string;
+  bio?: string;
+  skills?: Array<string>;
+  experience?: Array<{
+    company: string;
+    position: string;
+    period: string;
+    description: string;
+  }>;
+  education?: Array<{
+    institution: string;
+    degree: string;
+    period: string;
+  }>;
   email: string;
   contact?: string;
   resumeLink?: string;
@@ -15,6 +28,7 @@ export interface Iuser {
   refreshToken?: string;
   domain?: string;
 }
+
 
 export interface IuserMethods {
   isPasswordCorrect: (password: string) => Promise<boolean>;
@@ -55,6 +69,18 @@ const UserSchema = new mongoose.Schema<Iuser, UserModel, IuserMethods>(
     },
     resumeLink: {
       type: String,
+    },
+    bio: {
+      type: String,
+    },
+    skills: {
+      type: [String],
+    },
+    experience: {
+      type: [Object],
+    },
+    education: {
+      type: [Object],
     },
     profilePhotoLink: {
       type: String,
