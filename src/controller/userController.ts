@@ -38,14 +38,15 @@ export async function createUser(req: Request, res: Response, next: NextFunction
 
 export async function updateUser(req: Request, res: Response, next: NextFunction) {
   try {
-    const { id, name, contact, resumeLink, projects, domain } = req.body;
+    const { name, contact, resumeLink, projects, domain } = req.body;
+    const id = req.params.id;
     if (!id) {
       return res.status(400).json({
         success: false,
         message: 'Id is required.',
       });
     }
-    const existingUser = await User.findById({ _id: id });
+    const existingUser = await User.findById(id);
 
     if (!existingUser) {
       return res.status(404).json({
@@ -78,15 +79,14 @@ export async function updateUser(req: Request, res: Response, next: NextFunction
 
 export async function getUser(req: Request, res: Response, next: NextFunction) {
   try {
-    const { id } = req.query;
+    const id  = req.params.id;
     if (!id) {
       return res.status(400).json({
         success: false,
         message: 'Id is required.',
       });
     }
-
-    const user = await User.findById({ _id: id }).select('-password');
+    const user = await User.findById({_id:id});
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -108,7 +108,7 @@ export async function getUser(req: Request, res: Response, next: NextFunction) {
 
 export async function deleteUser(req: Request, res: Response, next: NextFunction) {
   try {
-    const { id } = req.body;
+    const id  = req.params.id;
     if (!id) {
       return res.status(400).json({
         success: false,

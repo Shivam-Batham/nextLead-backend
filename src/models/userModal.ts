@@ -64,7 +64,7 @@ const UserSchema = new mongoose.Schema<Iuser, UserModel, IuserMethods>(
     contact: {
       type: String,
       unique: true,
-      required: true,
+      required: false,
       minLength: [10, 'Contact number is required.'],
     },
     resumeLink: {
