@@ -4,10 +4,10 @@ import { authMiddle } from '../middlewares/authMiddleware.ts';
 
 const router: Router = Router();
 
-router.route('/create').post(createDomain);
-router.route('/get').get(authMiddle,getDomain);
-router.route('/getAll').get(authMiddle,getAllDomain);
-router.route('/update').put(authMiddle,updateDomain);
-router.route('/delete').delete(authMiddle,deleteDomain);
+router.route('/createdomain').post(createDomain);
+router.route('/getdomain/:id').get(authMiddle,getDomain);
+router.route('/getAlldomains').get(authMiddle,getAllDomain);
+router.route('/updatedomain/:id').put(authMiddle,updateDomain);
+router.route('/deletedomain/:id').delete(authMiddle,deleteDomain);
 
 export default router;

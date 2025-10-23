@@ -4,9 +4,9 @@ import { authMiddle } from '../middlewares/authMiddleware.ts';
 
 const router: Router = Router();
 
-router.route('/createPost').post(authMiddle, createPost);
-router.route('/updatePost').put(authMiddle, updatePost);
-router.route('/getPosts').get(authMiddle, getPosts);
-router.route('/deletePost').delete(authMiddle, deletePost);
-router.route('/getAllPosts').get(getAllPosts);
+router.route('/createpost').post(authMiddle, createPost);
+router.route('/updatepost/:id').put(authMiddle, updatePost);
+router.route('/getposts/:id').get(authMiddle, getPosts);
+router.route('/deletepost/:id').delete(authMiddle, deletePost);
+router.route('/getallposts').get(getAllPosts);
 export default router;

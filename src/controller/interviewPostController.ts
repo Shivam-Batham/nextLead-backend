@@ -78,7 +78,6 @@ export async function createPost(req: Request, res: Response, next: NextFunction
 
 export async function updatePost(req: Request, res: Response, next: NextFunction) {
   const {
-    postId,
     hrId,
     domainId,
     jobTitle,
@@ -96,9 +95,10 @@ export async function updatePost(req: Request, res: Response, next: NextFunction
     driveStatus,
   } = req.body;
 
+  const {id} = req.params;
   if (
     !(
-      postId &&
+      id &&
       hrId &&
       domainId &&
       jobTitle &&
@@ -124,7 +124,7 @@ export async function updatePost(req: Request, res: Response, next: NextFunction
 
   let post = await InterveiwPost.findByIdAndUpdate(
     {
-      _id: postId,
+      _id: id,
     },
     {
       domainId: domainId,
@@ -155,19 +155,21 @@ export async function updatePost(req: Request, res: Response, next: NextFunction
   return res.status(200).json({
     success: true,
     message: 'Post updated successfully.',
+    data:post
   });
 }
 
 export async function getPosts(req: Request, res: Response, next: NextFunction) {
   try {
-    const { hrId } = req.body;
-    if (!hrId) {
+    const { id } = req.params;
+    console.log(id)
+    if (!id) {
       return res.status(400).json({
         success: false,
         message: 'HrId is required.',
       });
     }
-    const posts = await InterveiwPost.find({ hrId });
+    const posts = await InterveiwPost.find({hrId:id});
 
     return res.status(200).json({
       success: true,
@@ -181,14 +183,15 @@ export async function getPosts(req: Request, res: Response, next: NextFunction) 
 
 export async function deletePost(req: Request, res: Response, next: NextFunction) {
   try {
-    const { hrId, postId } = req.body;
-    if (!(hrId && postId)) {
+    const { hrId } = req.body;
+    const {id} = req.params;
+    if (!(id && hrId)) {
       return res.status(400).json({
         success: false,
         message: 'All feilds are required.',
       });
     }
-    const post = await InterveiwPost.findOneAndDelete({ _id: postId, hrId });
+    const post = await InterveiwPost.findOneAndDelete({ _id: id, hrId:hrId });
 
     if (!post) {
       return res.status(404).json({
@@ -199,7 +202,7 @@ export async function deletePost(req: Request, res: Response, next: NextFunction
 
     return res.status(200).json({
       success: true,
-      message: 'All post is fectched successfully.',
+      message: 'Post is deleted successfully.',
       data: post,
     });
   } catch (error) {

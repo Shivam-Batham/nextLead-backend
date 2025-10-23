@@ -81,7 +81,7 @@ export async function updateHr(req: Request, res: Response, next: NextFunction) 
 
 export async function getHr(req: Request, res: Response, next: NextFunction) {
   try {
-    const { id } = req.query;
+    const { id } = req.params;
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -111,7 +111,7 @@ export async function getHr(req: Request, res: Response, next: NextFunction) {
 
 export async function deleteHr(req: Request, res: Response, next: NextFunction) {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     if (!id) {
       return res.status(400).json({
         success: false,
