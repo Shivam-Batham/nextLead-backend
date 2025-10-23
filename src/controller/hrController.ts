@@ -10,16 +10,16 @@ export async function createHr(req: Request, res: Response, next: NextFunction) 
         message: 'All fields are required.',
       });
     }
-    // check for existing User
-    const existingUser = await Hr.findOne({ email: email });
-    if (existingUser) {
+    // check for existing Hr
+    const existingHr = await Hr.findOne({ email: email });
+    if (existingHr) {
       return res.status(409).json({
         success: false,
-        message: 'User already exists.',
+        message: 'Hr already exists.',
       });
     }
 
-    // create new user
+    // create new Hr
     let hr = new Hr<Ihr>({ name: name, email: email, password: password, contact: contact });
     hr = await hr.save();
     // remove password from the user
@@ -27,7 +27,7 @@ export async function createHr(req: Request, res: Response, next: NextFunction) 
 
     return res.status(201).json({
       success: true,
-      message: 'User is created successfully.',
+      message: 'Hr is created successfully.',
       data: userWithoutPassword,
     });
   } catch (error) {
@@ -46,15 +46,15 @@ export async function updateHr(req: Request, res: Response, next: NextFunction) 
         message: 'Id is required.',
       });
     }
-    const existingUser = await Hr.findById(id);
+    const existingHr = await Hr.findById(id);
 
-    if (!existingUser) {
+    if (!existingHr) {
       return res.status(404).json({
         success: false,
         message: 'Hr not found',
       });
     }
-    const updatedUser = await Hr.findByIdAndUpdate(
+    const updatedHr = await Hr.findByIdAndUpdate(
       { _id: id },
       {
         name: name,
@@ -71,7 +71,7 @@ export async function updateHr(req: Request, res: Response, next: NextFunction) 
     return res.status(200).json({
       success: true,
       message: 'Hr updated successfully.',
-      data: updatedUser,
+      data: updatedHr,
     });
   } catch (error) {
     console.log(error);
@@ -89,19 +89,19 @@ export async function getHr(req: Request, res: Response, next: NextFunction) {
       });
     }
 
-    const user = await Hr.findById({ _id: id }).select('-password');
-    if (!user) {
+    const hr = await Hr.findById({ _id: id }).select('-password');
+    if (!hr) {
       return res.status(404).json({
         success: false,
-        message: 'User not found.',
-        data: user,
+        message: 'Hr not found.',
+        data: hr,
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: 'User found.',
-      data: user,
+      message: 'Hr found.',
+      data: hr,
     });
   } catch (error) {
     console.log(error);
@@ -119,19 +119,19 @@ export async function deleteHr(req: Request, res: Response, next: NextFunction) 
       });
     }
 
-    const existingUser = await Hr.findOne({ _id: id });
-    if (!existingUser) {
+    const existingHr = await Hr.findOne({ _id: id });
+    if (!existingHr) {
       return res.status(400).json({
         success: false,
-        message: 'User not found.',
+        message: 'Hr not found.',
       });
     }
 
-    const deletedUser = await Hr.deleteOne({ _id: id });
+    const deletedHr = await Hr.deleteOne({ _id: id });
     return res.status(200).json({
       success: true,
-      message: 'User is deleted succesdfully.',
-      data: deletedUser,
+      message: 'Hr is deleted succesdfully.',
+      data: deletedHr,
     });
   } catch (error) {
     console.log(error);
