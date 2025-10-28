@@ -7,7 +7,7 @@ export interface Ihr {
   name: string;
   password: string;
   email: string;
-  contact?: string;
+  contact: string;
   location?: string;
   previousHiredNumber?: number;
   jobPostCount?: number;
@@ -19,6 +19,20 @@ export interface Ihr {
   profilePhotoUrl?: string;
   accessToken?: string;
   refreshToken?: string;
+  bio?:string;
+  skills?: string[];
+  experience?: Array<{
+    company?: string;
+    position?: string;
+    period?: string;
+    description?: string;
+  }>;
+  education?: Array<{
+    institution?: string;
+    degree?: string;
+    period?: string;
+  }>;
+  role?: string;
 }
 
 export interface IHrMethods {
@@ -45,7 +59,7 @@ const HrSchema = new mongoose.Schema<Ihr, HrModel, IHrMethods>(
     password: {
       type: String,
       required: true,
-      minLength: [1, 'Email is required.'],
+      minLength: [1, 'Password is required.'],
     },
     contact: {
       type: String,
@@ -83,6 +97,26 @@ const HrSchema = new mongoose.Schema<Ihr, HrModel, IHrMethods>(
     refreshToken: {
       type: String,
     },
+    bio:  {
+      type: String,
+    },
+    skills: [{ type: String }],
+    experience: [
+      {
+        company: String,
+        position: String,
+        period: String,
+        description: String,
+      },
+    ],
+    education: [
+      {
+        institution: String,
+        degree: String,
+        period: String,
+      },
+    ],
+    role: { type: String, default: "recruiter" },
   },
   { timestamps: true },
 );

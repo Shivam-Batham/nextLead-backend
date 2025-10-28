@@ -38,33 +38,46 @@ export async function createUser(req: Request, res: Response, next: NextFunction
 
 export async function updateUser(req: Request, res: Response, next: NextFunction) {
   try {
-    const { name, contact, resumeLink, projects, domain } = req.body;
-    const id = req.params.id;
+    const { id } = req.params; 
+    const { name, contact, resumeLink, projects, domain, skills, experience, education, bio, profilePhotoLink } = req.body;
+  
     if (!id) {
       return res.status(400).json({
         success: false,
         message: 'Id is required.',
       });
     }
-    const existingUser = await User.findById(id);
 
+   
+    const existingUser = await User.findById(id);
     if (!existingUser) {
       return res.status(404).json({
         success: false,
-        message: 'User not found',
+        message: 'User not found.',
       });
     }
-    const updatedUser = await User.findByIdAndUpdate(
-      { _id: id },
-      {
-        name: name,
-        contact: contact,
-        resumeLink: resumeLink,
-        projects: projects,
-        domain: domain,
-      },
-      { new: true },
-    ).select('-password');
+
+    const updates: any = {};
+    if (name) updates.name = name;
+    if (contact) updates.contact = contact;
+    if (resumeLink) updates.resumeLink = resumeLink;
+    if (projects) updates.projects = projects;
+    if (domain) updates.domain = domain;
+    if (skills) updates.skills = skills;
+    if (experience) updates.experience = experience;
+    if (education) updates.education = education;
+    if (bio) updates.bio = bio;
+    if (profilePhotoLink) updates.profilePhotoLink = profilePhotoLink;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No fields provided to update.',
+      });
+    }
+
+    
+    const updatedUser = await User.findByIdAndUpdate(id, { $set: updates }, { new: true }).select('-password');
 
     return res.status(200).json({
       success: true,
@@ -72,10 +85,11 @@ export async function updateUser(req: Request, res: Response, next: NextFunction
       data: updatedUser,
     });
   } catch (error) {
-    console.log(error);
+    console.error('UpdateUser Error:', error);
     next(error);
   }
 }
+
 
 export async function getUser(req: Request, res: Response, next: NextFunction) {
   try {
