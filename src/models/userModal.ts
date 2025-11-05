@@ -27,6 +27,7 @@ export interface Iuser {
   accessToken?: string;
   refreshToken?: string;
   domain?: string;
+  role?: string;
 }
 
 
@@ -97,6 +98,7 @@ const UserSchema = new mongoose.Schema<Iuser, UserModel, IuserMethods>(
     refreshToken: {
       type: String,
     },
+    role: { type: String, default: "candidate" },
   },
   { timestamps: true },
 );

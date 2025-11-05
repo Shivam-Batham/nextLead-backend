@@ -11,7 +11,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: '${process.env.FRONTEND_URL}',
+    origin: `http://localhost:5173`,
     credentials: true,
   })
 );
@@ -32,7 +32,7 @@ app.use('/api/hr', hrRouter);
 app.use('/api/drive', driveAttendiesRouter);
 
 // interviewPost routes
-app.use('/api/posts', interveiwPostRouter);
+app.use('/api/post', interveiwPostRouter);
 
 // admin routes
 app.use('/api/admin', adminRouter); 

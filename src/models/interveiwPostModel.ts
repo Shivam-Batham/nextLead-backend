@@ -4,6 +4,7 @@ interface Ipost {
   _id?: Types.ObjectId;
   hrId: Types.ObjectId;
   domainId: Types.ObjectId;
+  company: string;
   jobTitle: string;
   description: string;
   qualification: string;
@@ -18,6 +19,8 @@ interface Ipost {
   openVacancies: number;
   candidateApplyCount: number;
   driveStatus: boolean;
+  time?: string;
+  featured?: boolean;
 }
 
 const postSchema = new mongoose.Schema<Ipost>(
@@ -30,7 +33,11 @@ const postSchema = new mongoose.Schema<Ipost>(
     domainId: {
       type: Schema.Types.ObjectId,
       ref: 'Domain',
-      required: true,
+      // required: true,
+    },
+    company: {
+      type: String,
+      required: [true, 'Company name is required.'],
     },
     jobTitle: {
       type: String,
@@ -38,7 +45,7 @@ const postSchema = new mongoose.Schema<Ipost>(
     },
     description: {
       type: String,
-      required: [true, 'description is required.'],
+      required: [true, 'Description is required.'],
     },
     qualification: {
       type: String,
@@ -46,7 +53,7 @@ const postSchema = new mongoose.Schema<Ipost>(
     },
     experienceRequired: {
       type: String,
-      required: [true, 'ExperienceRequired is required.'],
+      required: [true, 'Experience is required.'],
     },
     hiringDriveStart: {
       type: String,
@@ -55,6 +62,10 @@ const postSchema = new mongoose.Schema<Ipost>(
     hiringDriveEnd: {
       type: String,
       required: [true, 'Hiring drive end date is required.'],
+    },
+    time: {
+      type: String,
+      default: '',
     },
     location: {
       type: String,
@@ -83,6 +94,10 @@ const postSchema = new mongoose.Schema<Ipost>(
     candidateApplyCount: {
       type: Number,
       default: 0,
+    },
+    featured: {
+      type: Boolean,
+      default: false,
     },
     driveStatus: {
       type: Boolean,

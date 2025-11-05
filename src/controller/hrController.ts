@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import Hr, { type Ihr } from '../models/hrModel.ts';
+import { InterveiwPost } from '../models/interveiwPostModel.ts';
 
 export async function createHr(req: Request, res: Response, next: NextFunction) {
   try {
@@ -146,6 +147,39 @@ export async function getAllHr(req: Request, res: Response, next: NextFunction) 
       success: true,
       message: 'Hr found.',
       data: hr,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
+export async function getAllPostsByHr(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { id } = req.params; // hr id
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Hr id is required.',
+      });
+    }
+
+    // check if hr exists
+    const hrExists = await Hr.findById(id);
+    if (!hrExists) {
+      return res.status(404).json({
+        success: false,
+        message: 'Hr not found.',
+      });
+    }
+
+    // find posts created by this hr
+    const posts = await InterveiwPost.find({ createdBy: id }).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: posts.length > 0 ? 'Posts found.' : 'No posts found for this HR.',
+      data: posts,
     });
   } catch (error) {
     console.log(error);

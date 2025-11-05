@@ -5,8 +5,8 @@ export async function createPost(req: Request, res: Response, next: NextFunction
   try {
     const {
       hrId,
-      domainId,
       jobTitle,
+      company,
       description,
       qualification,
       experienceRequired,
@@ -19,13 +19,15 @@ export async function createPost(req: Request, res: Response, next: NextFunction
       salary,
       openVacancies,
       driveStatus,
+      domainId,
     } = req.body;
 
+    // ✅ Check for missing required fields (including company)
     if (
       !(
         hrId &&
-        domainId &&
         jobTitle &&
+        company &&
         description &&
         qualification &&
         experienceRequired &&
@@ -46,22 +48,24 @@ export async function createPost(req: Request, res: Response, next: NextFunction
       });
     }
 
+    // ✅ Create the post (include company and domainId)
     let post = new InterveiwPost({
-      hrId: hrId,
-      domainId: domainId,
-      jobTitle: jobTitle,
-      description: description,
-      qualification: qualification,
-      experienceRequired: experienceRequired,
-      hiringDriveStart: hiringDriveStart,
-      hiringDriveEnd: hiringDriveEnd,
-      location: location,
-      address: address,
-      email: email,
-      phone: phone,
-      salary: salary,
-      openVacancies: openVacancies,
-      driveStatus: driveStatus,
+      hrId,
+      domainId,
+      jobTitle,
+      company,
+      description,
+      qualification,
+      experienceRequired,
+      hiringDriveStart,
+      hiringDriveEnd,
+      location,
+      address,
+      email,
+      phone,
+      salary,
+      openVacancies,
+      driveStatus,
     });
 
     post = await post.save();
@@ -95,7 +99,7 @@ export async function updatePost(req: Request, res: Response, next: NextFunction
     driveStatus,
   } = req.body;
 
-  const {id} = req.params;
+  const { id } = req.params;
   if (
     !(
       id &&
@@ -155,21 +159,21 @@ export async function updatePost(req: Request, res: Response, next: NextFunction
   return res.status(200).json({
     success: true,
     message: 'Post updated successfully.',
-    data:post
+    data: post,
   });
 }
 
 export async function getPosts(req: Request, res: Response, next: NextFunction) {
   try {
     const { id } = req.params;
-    console.log(id)
+    console.log(id);
     if (!id) {
       return res.status(400).json({
         success: false,
         message: 'HrId is required.',
       });
     }
-    const posts = await InterveiwPost.find({hrId:id});
+    const posts = await InterveiwPost.find({ hrId: id });
 
     return res.status(200).json({
       success: true,
@@ -184,14 +188,14 @@ export async function getPosts(req: Request, res: Response, next: NextFunction) 
 export async function deletePost(req: Request, res: Response, next: NextFunction) {
   try {
     const { hrId } = req.body;
-    const {id} = req.params;
+    const { id } = req.params;
     if (!(id && hrId)) {
       return res.status(400).json({
         success: false,
         message: 'All feilds are required.',
       });
     }
-    const post = await InterveiwPost.findOneAndDelete({ _id: id, hrId:hrId });
+    const post = await InterveiwPost.findOneAndDelete({ _id: id, hrId: hrId });
 
     if (!post) {
       return res.status(404).json({
@@ -210,16 +214,51 @@ export async function deletePost(req: Request, res: Response, next: NextFunction
   }
 }
 
+// export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
+//   try {
+//     const posts = await InterveiwPost.find();
+
+//     return res.status(200).json({
+//       success: true,
+//       message: 'All post is fectched successfully.',
+//       data: posts ?? [],
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// }
+
 export async function getAllPosts(req: Request, res: Response, next: NextFunction) {
   try {
-    const posts = await InterveiwPost.find();
-    
+    // Parse query params with defaults
+    const limit = parseInt(req.query.limit as string) || 4; // number of posts per request
+    const page = parseInt(req.query.page as string) || 1;   // current page (1-based)
+
+    // Calculate skip count
+    const skip = (page - 1) * limit;
+
+    // Fetch paginated posts
+    const posts = await InterveiwPost.find()
+      .sort({ createdAt: -1 }) // newest first (optional)
+      .skip(skip)
+      .limit(limit);
+
+    // Get total count for frontend
+    const total = await InterveiwPost.countDocuments();
+
     return res.status(200).json({
       success: true,
-      message: 'All post is fectched successfully.',
-      data: posts ?? [],
+      message: 'Posts fetched successfully.',
+      data: posts,
+      pagination: {
+        total,
+        page,
+        limit,
+        hasMore: skip + limit < total,
+      },
     });
   } catch (error) {
     next(error);
   }
 }
+
