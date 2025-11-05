@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from 'express';
-import Hr, { type Ihr } from '../models/hrModel.ts';
+import Hr from '../models/hrModel.ts';
 import { InterveiwPost } from '../models/interveiwPostModel.ts';
 
-export async function createHr(req: Request, res: Response, next: NextFunction) {
+export async function createHr(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   try {
-    const { name, email, password,contact } = req.body;
+    const { name, email, password, contact } = req.body;
     if (!(name && email && password && contact)) {
       return res.status(400).json({
         success: false,
@@ -21,10 +21,11 @@ export async function createHr(req: Request, res: Response, next: NextFunction) 
     }
 
     // create new Hr
-    let hr = new Hr<Ihr>({ name: name, email: email, password: password, contact: contact });
+    let hr = new Hr({ name: name, email: email, password: password, contact: contact });
     hr = await hr.save();
     // remove password from the user
-    const { password: _, ...userWithoutPassword } = hr.toObject();  
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPassword } = hr.toObject();
 
     return res.status(201).json({
       success: true,
@@ -37,7 +38,7 @@ export async function createHr(req: Request, res: Response, next: NextFunction) 
   }
 }
 
-export async function updateHr(req: Request, res: Response, next: NextFunction) {
+export async function updateHr(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   try {
     const { name, location, contact, company, city, state, country } = req.body;
     const { id } = req.params;
@@ -80,7 +81,7 @@ export async function updateHr(req: Request, res: Response, next: NextFunction) 
   }
 }
 
-export async function getHr(req: Request, res: Response, next: NextFunction) {
+export async function getHr(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   try {
     const { id } = req.params;
     if (!id) {
@@ -110,7 +111,7 @@ export async function getHr(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export async function deleteHr(req: Request, res: Response, next: NextFunction) {
+export async function deleteHr(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   try {
     const { id } = req.params;
     if (!id) {
@@ -140,7 +141,7 @@ export async function deleteHr(req: Request, res: Response, next: NextFunction) 
   }
 }
 
-export async function getAllHr(req: Request, res: Response, next: NextFunction) {
+export async function getAllHr(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   try {
     const hr = await Hr.find();
     return res.status(200).json({
@@ -154,7 +155,7 @@ export async function getAllHr(req: Request, res: Response, next: NextFunction) 
   }
 }
 
-export async function getAllPostsByHr(req: Request, res: Response, next: NextFunction) {
+export async function getAllPostsByHr(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   try {
     const { id } = req.params; // hr id
     if (!id) {
