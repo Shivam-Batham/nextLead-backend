@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import User, { type Iuser } from '../models/userModal.ts';
+import User, { type Iuser } from '../models/userModal.js';
 
 export async function createUser(req: Request, res: Response, next: NextFunction) {
   try {

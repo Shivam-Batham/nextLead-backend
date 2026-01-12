@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { createDomain, deleteDomain, getAllDomain, getDomain, updateDomain } from '../controller/domainController.ts';
-import { authMiddle } from '../middlewares/authMiddleware.ts';
+import { createDomain, deleteDomain, getAllDomain, getDomain, updateDomain } from '../controller/domainController.js';
+import { authMiddle } from '../middlewares/authMiddleware.js';
 
 const router: Router = Router();
 

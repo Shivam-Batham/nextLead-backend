@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { createPost, deletePost, getAllPosts, getPosts, updatePost } from '../controller/interviewPostController.js';
+import { authMiddle } from '../middlewares/authMiddleware.js';
+import { getAllPostsByHr } from '../controller/hrController.js';
+const router = Router();
+router.route('/createpost').post(authMiddle, createPost);
+router.route('/updatepost/:id').put(authMiddle, updatePost);
+router.route('/getposts/:id').get(authMiddle, getPosts);
+router.route('/deletepost/:id').delete(authMiddle, deletePost);
+router.route('/getAllPosts').get(getAllPosts);
+router.route('/getAllPostsByHr/:id/posts').get(getAllPostsByHr);
+export default router;

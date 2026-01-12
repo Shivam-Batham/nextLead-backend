@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { createUser, deleteUser, getUser, updateUser } from '../controller/userController.ts';
-import { login, logout } from '../auth/auth.ts';
-import { authMiddle } from '../middlewares/authMiddleware.ts';
+import { createUser, deleteUser, getUser, updateUser } from '../controller/userController.js';
+import { login, logout } from '../auth/auth.js';
+import { authMiddle } from '../middlewares/authMiddleware.js';
 
 const router: Router = Router();
 

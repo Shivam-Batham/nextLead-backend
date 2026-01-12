@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { getAllUser } from "../controller/userController.ts";
-import { getAllHr } from "../controller/hrController.ts";
+import { getAllUser } from "../controller/userController.js";
+import { getAllHr } from "../controller/hrController.js";
 
 const router = Router();
 

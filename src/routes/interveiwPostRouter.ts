@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { createPost, deletePost, getAllPosts, getPosts, updatePost } from '../controller/interviewPostController.ts';
-import { authMiddle } from '../middlewares/authMiddleware.ts';
-import { getAllPostsByHr } from '../controller/hrController.ts';
+import { createPost, deletePost, getAllPosts, getPosts, updatePost } from '../controller/interviewPostController.js';
+import { authMiddle } from '../middlewares/authMiddleware.js';
+import { getAllPostsByHr } from '../controller/hrController.js';
 
 const router: Router = Router();
 

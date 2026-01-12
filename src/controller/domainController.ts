@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import { Domain } from '../models/domainModel.ts';
+import { Domain } from '../models/domainModel.js';
 
 export async function createDomain(req: Request, res: Response, next: NextFunction) {
   try {

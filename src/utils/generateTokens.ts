@@ -1,6 +1,6 @@
 import type { Types, Model as MongooseModel, Document } from 'mongoose';
 import type { NextFunction } from 'express';
-import type { IUserDocument } from '../models/userModal.ts';
+import type { IUserDocument } from '../models/userModal.js';
 
 type Tokens = {
   accessToken: string | null;

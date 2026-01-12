@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import Hr from '../models/hrModel.ts';
-import { InterveiwPost } from '../models/interveiwPostModel.ts';
+import Hr from '../models/hrModel.js';
+import { InterveiwPost } from '../models/interveiwPostModel.js';
 
 export async function createHr(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   try {

@@ -1,0 +1,173 @@
+import Hr from '../models/hrModel.js';
+import { InterveiwPost } from '../models/interveiwPostModel.js';
+export async function createHr(req, res, next) {
+    try {
+        const { name, email, password, contact } = req.body;
+        if (!(name && email && password && contact)) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required.',
+            });
+        }
+        // check for existing Hr
+        const existingHr = await Hr.findOne({ email: email });
+        if (existingHr) {
+            return res.status(409).json({
+                success: false,
+                message: 'Hr already exists.',
+            });
+        }
+        // create new Hr
+        let hr = new Hr({ name: name, email: email, password: password, contact: contact });
+        hr = await hr.save();
+        // remove password from the user
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password: _, ...userWithoutPassword } = hr.toObject();
+        return res.status(201).json({
+            success: true,
+            message: 'Hr is created successfully.',
+            data: userWithoutPassword,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+export async function updateHr(req, res, next) {
+    try {
+        const { name, location, contact, company, city, state, country } = req.body;
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Id is required.',
+            });
+        }
+        const existingHr = await Hr.findById(id);
+        if (!existingHr) {
+            return res.status(404).json({
+                success: false,
+                message: 'Hr not found',
+            });
+        }
+        const updatedHr = await Hr.findByIdAndUpdate({ _id: id }, {
+            name: name,
+            contact: contact,
+            location: location,
+            company: company,
+            city: city,
+            state: state,
+            country: country,
+        }, { new: true }).select('-password');
+        return res.status(200).json({
+            success: true,
+            message: 'Hr updated successfully.',
+            data: updatedHr,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+export async function getHr(req, res, next) {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Id is required.',
+            });
+        }
+        const hr = await Hr.findById({ _id: id }).select('-password');
+        if (!hr) {
+            return res.status(404).json({
+                success: false,
+                message: 'Hr not found.',
+                data: hr,
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: 'Hr found.',
+            data: hr,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+export async function deleteHr(req, res, next) {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: 'UserId is required.',
+            });
+        }
+        const existingHr = await Hr.findOne({ _id: id });
+        if (!existingHr) {
+            return res.status(400).json({
+                success: false,
+                message: 'Hr not found.',
+            });
+        }
+        const deletedHr = await Hr.deleteOne({ _id: id });
+        return res.status(200).json({
+            success: true,
+            message: 'Hr is deleted succesdfully.',
+            data: deletedHr,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+export async function getAllHr(req, res, next) {
+    try {
+        const hr = await Hr.find();
+        return res.status(200).json({
+            success: true,
+            message: 'Hr found.',
+            data: hr,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+export async function getAllPostsByHr(req, res, next) {
+    try {
+        const { id } = req.params; // hr id
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Hr id is required.',
+            });
+        }
+        // check if hr exists
+        const hrExists = await Hr.findById(id);
+        if (!hrExists) {
+            return res.status(404).json({
+                success: false,
+                message: 'Hr not found.',
+            });
+        }
+        // find posts created by this hr
+        const posts = await InterveiwPost.find({ createdBy: id }).sort({ createdAt: -1 });
+        return res.status(200).json({
+            success: true,
+            message: posts.length > 0 ? 'Posts found.' : 'No posts found for this HR.',
+            data: posts,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
